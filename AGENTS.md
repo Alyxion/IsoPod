@@ -1,8 +1,8 @@
-# IsoClaude Development Log
+# IsoPod Development Log
 
 ## Overview
 
-IsoClaude provides an isolated Ubuntu KDE desktop environment running in Docker, designed for safe Claude Code development with full GUI access via browser.
+IsoPod provides an isolated Ubuntu KDE desktop environment running in Docker, designed for safe Claude Code development with full GUI access via browser.
 
 ## Architecture
 
@@ -41,11 +41,11 @@ Projects are mounted from a config file (`projects.conf`):
 - `include_git: true` - Mount entire project including .git
 - `include_git: false` - Shadow .git with empty volume (safer for isolated work)
 
-The `isoclaude.sh` script parses this config and generates `docker-compose.yml`.
+The `isopod.sh` script parses this config and generates `docker-compose.yml`.
 
 ## Components
 
-### isoclaude.sh
+### isopod.sh
 
 Main control script with commands:
 - `up` - Start container, generate compose if needed
@@ -56,8 +56,8 @@ Main control script with commands:
 ### setup-container.sh
 
 Installs development environment inside container:
-- Python 3.12 + 3.13 (via deadsnakes PPA)
-- tkinter for both Python versions
+- Python 3.14 (via deadsnakes PPA)
+- tkinter support
 - Poetry (to /config/.local)
 - Node.js 20
 - Claude Code CLI
@@ -82,18 +82,18 @@ User-specific project mounts. Gitignored to keep local paths private.
 # First time setup
 cp projects.conf.example projects.conf
 # Edit projects.conf with your project paths
-./isoclaude.sh up
-./isoclaude.sh setup
+./isopod.sh up
+./isopod.sh setup
 
 # Daily use
-./isoclaude.sh up
+./isopod.sh up
 # Open http://localhost:3000
 # Work in isolated environment
-./isoclaude.sh down
+./isopod.sh down
 
 # After editing projects.conf
-./isoclaude.sh regenerate
-./isoclaude.sh down && ./isoclaude.sh up
+./isopod.sh regenerate
+./isopod.sh down && ./isopod.sh up
 ```
 
 ## Future Improvements

@@ -1,12 +1,12 @@
-# Claude Code Instructions for IsoClaude
+# Instructions for IsoPod
 
 ## Project Overview
 
-IsoClaude is a Docker-based isolated Ubuntu desktop environment for Claude development. It provides a full KDE desktop accessible via browser with persistent storage.
+IsoPod is a Docker-based isolated Ubuntu desktop environment for Claude development. It provides a full KDE desktop accessible via browser with persistent storage.
 
 ## Key Files
 
-- `isoclaude.sh` - Main control script (all commands in one file)
+- `isopod.sh` - Main control script (all commands in one file)
 - `scripts/setup-container.sh` - Dev tools installer run inside container
 - `projects.conf` - User's project mount configuration (gitignored)
 - `projects.conf.example` - Template for new users
@@ -15,32 +15,30 @@ IsoClaude is a Docker-based isolated Ubuntu desktop environment for Claude devel
 ## Commands
 
 ```bash
-./isoclaude.sh up              # Start container
-./isoclaude.sh down            # Stop container
-./isoclaude.sh restart         # Rebuild container with current config
-./isoclaude.sh setup           # Install Python/Poetry/Claude
-./isoclaude.sh browser         # Open desktop in browser
-./isoclaude.sh regenerate      # Rebuild compose from projects.conf
-./isoclaude.sh claude          # Launch Claude CLI
-./isoclaude.sh bash            # Bash shell in project
-./isoclaude.sh code            # VS Code remote
-./isoclaude.sh windsurf        # Windsurf remote
-./isoclaude.sh arch            # Show current CPU architecture
-./isoclaude.sh arch amd64      # Switch to amd64 emulation
-./isoclaude.sh arch native     # Switch to native (default)
+./isopod.sh up              # Start container
+./isopod.sh down            # Stop container
+./isopod.sh restart         # Rebuild container with current config
+./isopod.sh setup           # Install Python/Poetry/AI tools
+./isopod.sh browser         # Open desktop in browser
+./isopod.sh regenerate      # Rebuild compose from projects.conf
+./isopod.sh claude          # Launch AI CLI
+./isopod.sh bash            # Bash shell in project
+./isopod.sh code            # VS Code remote
+./isopod.sh windsurf        # Windsurf remote
+./isopod.sh arch            # Show current CPU architecture
+./isopod.sh arch amd64      # Switch to amd64 emulation
+./isopod.sh arch native     # Switch to native (default)
 ```
 
 ## Port Mappings
 
-| Container | Host | Service |
-|-----------|------|---------|
-| 3000 | 3000 | Desktop (noVNC) |
-| 22 | 2222 | SSH |
-| 8080 | 8090 | Python/NiceGUI HTTP |
-| 8443 | 8453 | Python/NiceGUI HTTPS |
-| 8501 | 8511 | Streamlit |
-| 3001 | 3010 | Node.js |
-| 5000 | 5010 | Flask |
+| Container | Host (native) | Host (amd64) | Service |
+|-----------|---------------|--------------|---------|
+| 3000 | 3000 | 3100 | Desktop (noVNC) |
+| 22 | 2222 | 2322 | SSH |
+| 8000-8999 | 9000-9999 | 10000-10999 | All 8xxx ports |
+| 3001 | 3010 | 3110 | Node.js |
+| 5000 | 5010 | 5110 | Flask |
 
 ## Important Notes
 
@@ -58,6 +56,11 @@ IsoClaude is a Docker-based isolated Ubuntu desktop environment for Claude devel
 
 ### projects.conf Format (TOML)
 ```toml
+# Global settings
+[Settings]
+screenshots = ~/Documents/Screenshots  # Optional: mounted at /screenshots
+
+# Projects
 [ProjectName]
 path = /full/path/to/project
 git = true|false
@@ -72,6 +75,7 @@ chrome = true
 
 - `git = true` - Include .git folder (for commits/pushes)
 - `chrome = true` - Enable Chrome MCP when launching Claude
+- `screenshots` - Host directory mounted read-only at `/screenshots`
 
 Note: Old format (`/path:bool`) is auto-migrated on first use.
 
@@ -85,21 +89,21 @@ Note: Old format (`/path:bool`) is auto-migrated on first use.
 Two independent environments that can run in parallel:
 
 - **native** (default): Uses host CPU, faster performance
-  - Container: `iso-claude-ubuntu`
-  - Ports: 3000, 2222, 8090, 8453, 8511, 3010, 5010
+  - Container: `iso-pod-ubuntu`
+  - Ports: 3000, 2222, 9000-9999, 3010, 5010
   - Compose: `docker-compose.yml`
 
 - **amd64**: Emulates x86_64 via Docker's QEMU
-  - Container: `iso-claude-ubuntu-amd64`
-  - Ports: 3100, 2322, 8190, 8553, 8611, 3110, 5110
+  - Container: `iso-pod-ubuntu-amd64`
+  - Ports: 3100, 2322, 10000-10999, 3110, 5110
   - Compose: `docker-compose-amd64.yml`
 
-Setting stored in `.arch` file. Use `isoclaude arch` to see status of both.
+Setting stored in `.arch` file. Use `isopod arch` to see status of both.
 Setup runs automatically on first use of each environment.
 
 ## When Modifying
 
-### Adding Features to isoclaude.sh
+### Adding Features to isopod.sh
 - Keep POSIX-compatible bash
 - Update help text in `cmd_help()`
 - Add case in main switch at bottom
@@ -120,16 +124,16 @@ Setup runs automatically on first use of each environment.
 
 ```bash
 # Full reset test
-./isoclaude.sh down
+./isopod.sh down
 docker compose -f docker-compose.yml down -v  # Remove volumes
-./isoclaude.sh up
-./isoclaude.sh setup
+./isopod.sh up
+./isopod.sh setup
 # Verify tools installed
 
 # Persistence test
-./isoclaude.sh down
-./isoclaude.sh up
-docker exec iso-claude-ubuntu python3.12 --version  # Should work
+./isopod.sh down
+./isopod.sh up
+docker exec iso-pod-ubuntu python3.14 --version  # Should work
 ```
 
 ## Don't Commit

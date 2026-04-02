@@ -1,6 +1,6 @@
 #!/bin/bash
 # Setup script to install development tools in the ubuntu-desktop container
-# Run with: ./isoclaude.sh setup
+# Run with: ./isopod.sh setup
 
 set -e
 
@@ -44,21 +44,17 @@ echo "=== Adding deadsnakes PPA for Python versions ==="
 add-apt-repository -y ppa:deadsnakes/ppa
 apt-get update
 
-echo "=== Installing Python 3.12 with tkinter ==="
-apt-get install -y python3.12 python3.12-venv python3.12-dev python3.12-tk
-
-echo "=== Installing Python 3.13 with tkinter ==="
-apt-get install -y python3.13 python3.13-venv python3.13-dev python3.13-tk
+echo "=== Installing Python 3.14 with tkinter ==="
+apt-get install -y python3.14 python3.14-venv python3.14-dev python3.14-tk
 
 # Create 'python' symlink (Ubuntu doesn't have this by default, Poetry needs it)
 ln -sf python3 /usr/bin/python
 
-echo "=== Installing pip for both Python versions ==="
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13
+echo "=== Installing pip ==="
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.14
 
 echo "=== Installing Poetry ==="
-curl -sSL https://install.python-poetry.org | python3.12 -
+curl -sSL https://install.python-poetry.org | python3.14 -
 
 # Configure Poetry - disable in-project venvs (Poetry 2.2.x bug workaround)
 /config/.local/bin/poetry config virtualenvs.in-project false
@@ -152,8 +148,8 @@ if ! id -u sshd >/dev/null 2>&1; then
     chmod 755 /var/empty
 fi
 
-# Set password for abc user (default: isoclaude)
-echo "abc:isoclaude" | chpasswd
+# Set password for abc user (default: isopod)
+echo "abc:isopod" | chpasswd
 
 # Ensure abc user has a proper shell
 usermod -s /bin/bash abc
@@ -197,8 +193,7 @@ echo "Claude in Chrome extension will be installed on first browser launch"
 echo "Note: You'll need to log in to Claude on first use (credentials persist after)"
 
 echo "=== Verifying installations ==="
-python3.12 --version
-python3.13 --version
+python3.14 --version
 /config/.local/bin/poetry --version || true
 node --version
 claude --version
@@ -207,7 +202,7 @@ echo ""
 echo "=== Setup complete! ==="
 echo "Projects mounted at: /projects/"
 echo "Access desktop at: http://localhost:3000"
-echo "SSH access: ssh abc@localhost -p 2222 (password: isoclaude)"
+echo "SSH access: ssh abc@localhost -p 2222 (password: isopod)"
 echo ""
 echo "All installations persist across restarts"
 echo "IMPORTANT: Change the default SSH password with passwd"

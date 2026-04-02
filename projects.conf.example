@@ -1,8 +1,12 @@
-# IsoClaude Project Configuration (TOML format)
+# IsoPod Project Configuration (TOML format)
 #
 # Copy this file to projects.conf and customize
-#
-# Format:
+
+# --- Global Settings ---
+# [Settings]
+# screenshots = ~/Documents/Screenshots   # Mounted read-only at /screenshots
+
+# --- Project Format ---
 # [ProjectName]
 # path = /full/path/to/project
 # git = true|false
@@ -15,7 +19,7 @@
 # git = false   -> .git folder is excluded (safe isolation, default)
 # chrome = true -> Enable Chrome MCP when launching Claude (default)
 
-# Examples:
+# --- Examples ---
 
 # [MyApp]
 # path = /Users/yourname/projects/MyApp

@@ -1,10 +1,10 @@
-# IsoClaude
+# IsoPod
 
 **Unleash Claude's full potential. No interruptions. No limits. Complete isolation.**
 
-IsoClaude is a sandboxed Ubuntu environment that lets you run Claude Code in fully autonomous mode—where AI handles everything from file creation to git commits without asking permission for every command.
+IsoPod is a sandboxed Ubuntu environment that lets you run Claude Code in fully autonomous mode—where AI handles everything from file creation to git commits without asking permission for every command.
 
-![IsoClaude Desktop](media/desktop-screenshot.png)
+![IsoPod Desktop](media/desktop-screenshot.png)
 
 ## The Problem
 
@@ -16,9 +16,9 @@ Even with a carefully tuned `settings.json` allowlist, there are always edge cas
 
 ## The Solution
 
-IsoClaude gives Claude a full Ubuntu desktop where it can work autonomously—safely isolated from your host system. Your real files, your git history, your system configs? Untouchable. Claude gets a sandbox. You get your time back.
+IsoPod gives Claude a full Ubuntu desktop where it can work autonomously—safely isolated from your host system. Your real files, your git history, your system configs? Untouchable. Claude gets a sandbox. You get your time back.
 
-**What people are doing with IsoClaude:**
+**What people are doing with IsoPod:**
 - 9+ hour autonomous coding sessions building entire features
 - Greenfield project scaffolding from a single prompt
 - Complex refactoring across dozens of files
@@ -27,39 +27,39 @@ IsoClaude gives Claude a full Ubuntu desktop where it can work autonomously—sa
 
 ## Installation
 
-Add IsoClaude to your shell so you can run it from anywhere:
+Add IsoPod to your shell so you can run it from anywhere:
 
 **macOS (zsh):**
 ```bash
-echo 'alias isoclaude="/path/to/IsoClaude/isoclaude.sh"' >> ~/.zshrc
+echo 'alias isopod="/path/to/IsoPod/isopod.sh"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 **Linux (bash):**
 ```bash
-echo 'alias isoclaude="/path/to/IsoClaude/isoclaude.sh"' >> ~/.bashrc
+echo 'alias isopod="/path/to/IsoPod/isopod.sh"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Replace `/path/to/IsoClaude` with your actual path. After this, use `isoclaude` instead of `./isoclaude.sh`.
+Replace `/path/to/IsoPod` with your actual path. After this, use `isopod` instead of `./isopod.sh`.
 
 ## Quick Start
 
 ```bash
 # 1. Add your first project
-isoclaude projects:add ~/projects/MyApp
+isopod projects:add ~/projects/MyApp
 
 # 2. Start the container
-isoclaude up
+isopod up
 
 # 3. Open desktop in browser
-isoclaude browser
+isopod browser
 
 # 4. Install dev tools (first time only)
-isoclaude setup
+isopod setup
 
 # 5. Launch Claude
-isoclaude claude
+isopod claude
 ```
 
 That's it. Select your project, choose dangerous mode, and let Claude work.
@@ -69,12 +69,12 @@ That's it. Select your project, choose dangerous mode, and let Claude work.
 ```bash
 # From within a project directory (auto-detects, just asks for mode)
 cd ~/projects/MyApp
-isoclaude claude                    # Detects MyApp, asks Normal/Dangerous
-isoclaude claude --resume           # Resume previous conversation
-isoclaude claude -p "build a REST API"  # Start with a prompt
+isopod claude                    # Detects MyApp, asks Normal/Dangerous
+isopod claude --resume           # Resume previous conversation
+isopod claude -p "build a REST API"  # Start with a prompt
 
 # From elsewhere (shows project picker first)
-isoclaude claude                    # Pick project, then mode
+isopod claude                    # Pick project, then mode
 ```
 
 The launcher:
@@ -90,22 +90,22 @@ Use arrow keys to navigate, Enter to select.
 
 ```bash
 # List configured projects
-isoclaude projects:list
+isopod projects:list
 
 # Add project (excludes .git by default, chrome enabled by default)
-isoclaude projects:add ~/projects/MyApp
+isopod projects:add ~/projects/MyApp
 
 # Add/update with git access (for commits/pushes)
-isoclaude projects:add ~/projects/MyApp --git true
+isopod projects:add ~/projects/MyApp --git true
 
 # Disable chrome MCP for a project
-isoclaude projects:add ~/projects/MyApp --chrome false
+isopod projects:add ~/projects/MyApp --chrome false
 
 # Combine flags
-isoclaude projects:add ~/projects/MyApp --git true --chrome true
+isopod projects:add ~/projects/MyApp --git true --chrome true
 
 # Remove by name or path
-isoclaude projects:remove MyApp
+isopod projects:remove MyApp
 ```
 
 Changes auto-apply on the next command that uses the container.
@@ -114,33 +114,52 @@ Projects mount to `/projects/<folder_name>` inside the container.
 
 ### Git Isolation
 
-By default, IsoClaude excludes `.git` folders—Claude works on your code but can't mess with your commit history. Set `--git true` when you want Claude to make commits.
+By default, IsoPod excludes `.git` folders—Claude works on your code but can't mess with your commit history. Set `--git true` when you want Claude to make commits.
 
 ### Chrome MCP
 
-By default, Chrome browser automation is enabled (`--chrome true`). This adds `--mcp claude-in-chrome` when launching Claude, allowing browser control capabilities. Set `--chrome false` to disable.
+By default, Chrome browser automation is enabled (`--chrome true`). This adds `--mcp claude-in-chrome` when launching the assistant, allowing browser control capabilities. Set `--chrome false` to disable.
+
+### Screenshots Directory
+
+Share a host directory with the container for Claude to access screenshots. Add to `projects.conf`:
+
+```toml
+[Settings]
+screenshots = ~/Documents/Screenshots
+```
+
+Screenshots are mounted read-only at `/screenshots` inside the container. This lets Claude view screenshots you take on your host machine.
+
+**Configuring your screenshot directory:**
+
+**macOS:** System Settings → Keyboard → Screenshots → Options → Save to: choose your folder (e.g., `~/Documents/Screenshots`)
+
+**Windows (Greenshot):** Right-click tray icon → Preferences → Output → Storage location: set your folder (e.g., `C:\Users\You\Documents\Screenshots`)
+
+**Linux (Flameshot):** `flameshot config` → General → Save path: set your folder
 
 ### CPU Architecture
 
-IsoClaude supports two independent environments that can run in parallel:
+IsoPod supports two independent environments that can run in parallel:
 
 ```bash
 # Show status of both environments
-isoclaude arch
+isopod arch
 
 # Switch active environment to amd64
-isoclaude arch amd64
-isoclaude up
+isopod arch amd64
+isopod up
 
 # Switch back to native
-isoclaude arch native
-isoclaude up
+isopod arch native
+isopod up
 ```
 
-| Environment | Desktop | SSH | HTTP | Description |
-|------------|---------|-----|------|-------------|
-| **native** | :3000 | :2222 | :8090 | Host CPU (faster) |
-| **amd64** | :3100 | :2322 | :8190 | x86_64 emulated |
+| Environment | Desktop | SSH | 8xxx ports | Description |
+|------------|---------|-----|------------|-------------|
+| **native** | :3000 | :2222 | :9xxx | Host CPU (faster) |
+| **amd64** | :3100 | :2322 | :10xxx | x86_64 emulated |
 
 Both environments have completely separate volumes and can run simultaneously.
 Setup runs automatically on first use of each environment.
@@ -166,22 +185,22 @@ This creates a powerful build-test-verify loop: Claude Code builds your app, the
 
 | Command | Description |
 |---------|-------------|
-| `isoclaude up` | Start the container |
-| `isoclaude down` | Stop the container (data persists) |
-| `isoclaude restart` | Rebuild container with current config |
-| `isoclaude setup` | Install Python, Poetry, Rust, Node, Claude CLI |
-| `isoclaude browser [url]` | Open desktop in browser (default: localhost:3000) |
-| `isoclaude bash [project]` | Bash shell in project (auto-detects from cwd) |
-| `isoclaude code [project]` | VS Code remote to project (auto-detects from cwd) |
-| `isoclaude windsurf [project]` | Windsurf remote to project (auto-detects from cwd) |
-| `isoclaude claude [args]` | Launch Claude in a project |
-| `isoclaude projects:list` | Show configured projects |
-| `isoclaude projects:add` | Add a project mount |
-| `isoclaude projects:remove` | Remove a project mount |
-| `isoclaude arch` | Show status of both environments |
-| `isoclaude arch native` | Switch to native (faster, default) |
-| `isoclaude arch amd64` | Switch to amd64 (x86_64 emulated) |
-| `isoclaude regenerate` | Rebuild docker-compose.yml |
+| `isopod up` | Start the container |
+| `isopod down` | Stop the container (data persists) |
+| `isopod restart` | Rebuild container with current config |
+| `isopod setup` | Install Python, Poetry, Rust, Node, Claude CLI |
+| `isopod browser [url]` | Open desktop in browser (default: localhost:3000) |
+| `isopod bash [project]` | Bash shell in project (auto-detects from cwd) |
+| `isopod code [project]` | VS Code remote to project (auto-detects from cwd) |
+| `isopod windsurf [project]` | Windsurf remote to project (auto-detects from cwd) |
+| `isopod claude [args]` | Launch Claude in a project |
+| `isopod projects:list` | Show configured projects |
+| `isopod projects:add` | Add a project mount |
+| `isopod projects:remove` | Remove a project mount |
+| `isopod arch` | Show status of both environments |
+| `isopod arch native` | Switch to native (faster, default) |
+| `isopod arch amd64` | Switch to amd64 (x86_64 emulated) |
+| `isopod regenerate` | Rebuild docker-compose.yml |
 
 The `bash`, `code`, `windsurf`, and `claude` commands auto-detect the project if you're inside a configured project directory. Otherwise, they show an interactive picker.
 
@@ -193,19 +212,17 @@ Applications running inside the container are accessible on your host:
 |---------|-----------|-------------|------------|
 | Desktop (noVNC) | 3000 | 3000 | 3100 |
 | SSH | 22 | 2222 | 2322 |
-| Python/NiceGUI HTTP | 8080 | 8090 | 8190 |
-| Python/NiceGUI HTTPS | 8443 | 8453 | 8553 |
-| Streamlit | 8501 | 8511 | 8611 |
+| All 8xxx ports | 8000-8999 | 9000-9999 | 10000-10999 |
 | Node.js | 3001 | 3010 | 3110 |
 | Flask | 5000 | 5010 | 5110 |
 
-Example: Run NiceGUI on port 8080, access at `localhost:8090` (native) or `localhost:8190` (amd64)
+Example: Run NiceGUI on port 8080, access at `localhost:9080` (native) or `localhost:10080` (amd64)
 
 ## What's Installed
 
-After `./isoclaude.sh setup`:
+After `./isopod.sh setup`:
 
-- **Python** 3.12 + 3.13 with tkinter
+- **Python** 3.14 with tkinter
 - **Poetry** for dependency management
 - **Rust** via rustup
 - **Node.js** 20 + npm
@@ -218,8 +235,8 @@ After `./isoclaude.sh setup`:
 | Method | Address | Notes |
 |--------|---------|-------|
 | Desktop | http://localhost:3000 | Full KDE in browser |
-| SSH | `ssh abc@localhost -p 2222` | Password: `isoclaude` |
-| Shell | `isoclaude bash` | Direct access |
+| SSH | `ssh abc@localhost -p 2222` | Password: `isopod` |
+| Shell | `isopod bash` | Direct access |
 
 > **First thing**: Change the default SSH password with `passwd`
 
@@ -230,12 +247,12 @@ Connect your local IDE to projects inside the container:
 ```bash
 # From within a project directory (auto-detects project)
 cd ~/projects/MyApp
-isoclaude code              # Opens VS Code
-isoclaude windsurf          # Opens Windsurf
+isopod code              # Opens VS Code
+isopod windsurf          # Opens Windsurf
 
 # Or specify project explicitly
-isoclaude code MyApp
-isoclaude windsurf MyApp
+isopod code MyApp
+isopod windsurf MyApp
 ```
 
 Requires the "Remote - SSH" extension installed in your IDE.
